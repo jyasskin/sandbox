@@ -9,6 +9,11 @@
 'use strict';
 
 var errorElement = document.querySelector('#errorMsg');
+var getUserMediaButton = document.querySelector('#getUserMedia');
+var disableButton = document.querySelector('#disable');
+var enableButton = document.querySelector('#enable');
+var stopButton = document.querySelector('#stop');
+var statusSpan = document.querySelector('#status');
 var video = document.querySelector('video');
 
 // Put variables in global scope to make them available to the browser console.
@@ -17,16 +22,36 @@ var constraints = window.constraints = {
   video: true
 };
 
-function handleSuccess(stream) {
-  var videoTracks = stream.getVideoTracks();
-  console.log('Got stream with constraints:', constraints);
-  console.log('Using video device: ' + videoTracks[0].label);
-  stream.oninactive = function() {
-    console.log('Stream inactive');
-  };
-  window.stream = stream; // make variable available to browser console
-  video.srcObject = stream;
+function updateState() {
+  var stream = window.stream;
+  var videoTrack = stream ? stream.getVideoTracks()[0] : null;
+  if (!videoTrack) {
+    disableButton.disabled = true;
+    enableButton.disabled = true;
+    stopButton.disabled = true;
+    statusSpan.innerText = '';
+    return;
+  }
+  stopButton.disabled = false;
+  var status = '';
+  status += videoTrack.label;
+  if (stream.active) {
+    status += ' active';
+  } else {
+    status += ' inactive';
+  }
+  if (videoTrack.enabled) {
+    disableButton.disabled = false;
+    enableButton.disabled = true;
+    status += ' enabled';
+  } else {
+    disableButton.disabled = true;
+    enableButton.disabled = false;
+    status += ' disabled';
+  }
+  statusSpan.innerText = status;
 }
+
 
 function handleError(error) {
   if (error.name === 'ConstraintNotSatisfiedError') {
@@ -47,5 +72,36 @@ function errorMsg(msg, error) {
   }
 }
 
-navigator.mediaDevices.getUserMedia(constraints).
-    then(handleSuccess).catch(handleError);
+getUserMediaButton.addEventListener('click', event => {
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then(stream => {
+      var videoTracks = stream.getVideoTracks();
+      console.log('Got stream with constraints:', constraints);
+      console.log('Using video device: ' + videoTracks[0].label);
+      stream.oninactive = function() {
+        console.log('Stream inactive');
+        updateState();
+      };
+      window.stream = stream; // make variable available to browser console
+      video.srcObject = stream;
+    })
+    .catch(handleError)
+    .then(() => updateState());
+});
+
+enableButton.addEventListener('click', event => {
+  window.stream.getVideoTracks()[0].enabled = true;
+  updateState();
+});
+
+disableButton.addEventListener('click', event => {
+  window.stream.getVideoTracks()[0].enabled = false;
+  updateState();
+});
+
+stopButton.addEventListener('click', event => {
+  window.stream.getVideoTracks()[0].stop();
+  updateState();
+});
+
+updateState();

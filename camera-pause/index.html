@@ -12,17 +12,13 @@
   <meta charset="utf-8">
   <meta name="description" content="WebRTC code samples">
   <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
-  <meta itemprop="description" content="Client-side WebRTC code samples">
-  <meta itemprop="image" content="../../../images/webrtc-icon-192x192.png">
-  <meta itemprop="name" content="WebRTC code samples">
   <meta name="mobile-web-app-capable" content="yes">
   <meta id="theme-color" name="theme-color" content="#ffffff">
 
   <base target="_blank">
 
-  <title>getUserMedia</title>
+  <title>camera permission lifetime</title>
 
-  <link rel="icon" sizes="192x192" href="../../../images/webrtc-icon-192x192.png">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="main.css">
 
@@ -32,23 +28,26 @@
 
   <div id="container">
 
-    <div class="highlight">
-      <p>New codelab: <a href="https://codelabs.developers.google.com/codelabs/webrtc-web">Realtime communication with WebRTC</a></p>
+    <h1>Camera permission lifetime</h1>
+
+    <div id="buttons">
+      <button id="getUserMedia">Replace stream</button>
+      <button id="disable">Disable stream</button>
+      <button id="enable">Enable stream</button>
+      <button id="stop">Stop stream</button>
     </div>
 
-    <h1><a href="//webrtc.github.io/samples/" title="WebRTC samples homepage">WebRTC samples</a> <span>getUserMedia</span></h1>
+    <p>Status: <span id="status"></span></p>
 
     <video id="gum-local" autoplay></video>
 
     <div id="errorMsg"></div>
 
-    <p class="warning"><strong>Warning:</strong> if you're not using headphones, pressing play will cause feedback.</p>
-
     <p>Display the video stream from <code>getUserMedia()</code> in a video element.</p>
 
     <p>The <code>MediaStream</code> object <code>stream</code> passed to the <code>getUserMedia()</code> callback is in global scope, so you can inspect it from the console.</p>
 
-    <a href="https://github.com/webrtc/samples/tree/gh-pages/src/content/getusermedia/gum" title="View source for this page on GitHub" id="viewSource">View source on GitHub</a>
+    <a href="https://github.com/webrtc/samples/tree/gh-pages/src/content/getusermedia/gum" id="viewSource">View source on GitHub</a>
   </div>
 
   <script src="adapter.js"></script>
